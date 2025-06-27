@@ -24,7 +24,7 @@ Clone the repository and install dependencies:
 git clone https://github.com/1771-Technologies/one-million-row-demo.git
 cd one-million-row-demo
 pnpm install
-pnm run dev
+pnpm run dev
 ```
 
 This will launch:
