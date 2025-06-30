@@ -5,6 +5,7 @@ import { open } from "sqlite";
 import type {
   AsyncDataRequestBlockProReact,
   AsyncDataResponseProReact,
+  SortModelItemProReact,
 } from "@1771technologies/lytenyte-pro/types";
 
 const app = new Hono();
@@ -37,7 +38,16 @@ app.post("api/get-data", async (c) => {
     blocks: AsyncDataRequestBlockProReact[];
     blockSize: number;
     reqTime: number;
+    sort: SortModelItemProReact[];
   };
+
+  const modelItem = body.sort.at(0);
+
+  const orderBy = modelItem
+    ? `ORDER BY ${modelItem.columnId} ${
+        modelItem.isDescending ? "DESC" : "ASC"
+      }`
+    : "";
 
   const countResult = await db.all(`SELECT COUNT(*) as cnt FROM employees`);
   const count = countResult[0].cnt as number;
@@ -55,6 +65,7 @@ app.post("api/get-data", async (c) => {
             hire_date
         FROM
             employees
+        ${orderBy}
         LIMIT ${c.blockStart}, ${body.blockSize}`);
 
     return {

@@ -70,6 +70,7 @@ export function Grid() {
           blocks: p.requestBlocks,
           blockSize: p.blockSize,
           reqTime: p.reqTime,
+          sort: p.api.getState().sortModel.peek(),
         }),
       });
       const data = await res.json();
@@ -83,6 +84,14 @@ export function Grid() {
   const grid = useLyteNytePro({
     gridId: useId(),
     columns,
+    columnBase: {
+      sortable: true,
+      movable: true,
+      resizable: true,
+      uiHints: {
+        sortButton: true,
+      },
+    },
     rowDataSource: ds,
 
     // Enables row selection; selected IDs available via grid state or API
