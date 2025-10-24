@@ -1,15 +1,13 @@
----
-title: One Million Row Demo
-description: Load and display 1M+ rows using SQLite, Vite, and LyteNyte Grid.
----
+![demo](./demo.png)
 
 # One Million Row Demo
 
-A high-performance demo that showcases how to load and interact with over 1 million rows of data from an external source using modern tools.
+A high-performance demo showcasing how to load and interact with over one million
+rows of data from an external source using LyteNyte Grid. This example demonstrates
+server-side data loading with LyteNyte Grid.
 
-This project uses:
+In addition to [LyteNyte Grid](https://www.1771technologies.com/demo), this demo uses:
 
-- **[LyteNyte Grid](https://www.1771technologies.com/demo)** – Lightning-fast grid for large data sets.
 - **SQLite** – Lightweight, embedded database.
 - **[Vite](https://vitejs.dev/)** – Next-generation frontend tooling.
 - **[Hono](https://hono.dev/)** – Ultra-lightweight, fast backend framework.
@@ -23,31 +21,21 @@ Clone the repository and install dependencies:
 ```bash
 git clone https://github.com/1771-Technologies/one-million-row-demo.git
 cd one-million-row-demo
+git lfs fetch --all
+git lfs pull
 pnpm install
 pnpm run dev
 ```
 
-This will launch:
+This launches:
 
 - A Vite frontend for the UI
-- A Hono backend that serves data from employee-db.sqlite to the frontend
-
-```
-one-million-row-demo/
-├── public/               # Static assets
-├── src/
-│   ├── components/       # UI components
-│   ├── lib/              # Utilities
-│   └── main.tsx          # App entry
-├── server/               # Hono backend
-├── employee-db.sqlite    # Database with 1M+ rows
-├── vite.config.ts        # Vite config
-└── README.mdx
-```
+- A Hono backend that serves data from `movies.db` to the frontend
 
 ### 📊 LyteNyte Grid
 
-This project demonstrates the power of [LyteNyte Grid](https://www.1771technologies.com/demo), a lightweight, high-performance data grid built for handling massive datasets with ease.
+This project demonstrates the power of [LyteNyte Grid](https://www.1771technologies.com/demo), a lightweight,
+high-performance data grid built to handle massive datasets with ease.
 
 Key features include:
 
@@ -56,4 +44,19 @@ Key features include:
 - Minimal setup with flexible configuration
 - Designed for modern UI frameworks like React and Vite
 
-You can explore a live version of the grid [here](https://www.1771technologies.com/demo).
+Explore the live demo [here](https://www.1771technologies.com/demo).
+
+### About the Implementation
+
+LyteNyte Grid handles the client-side half of the server-loading process.
+The server is responsible for handling data requests and implementing any required functionality.
+In this demo, the backend logic lives in the \`server\` folder.
+
+In fewer than 300 lines of code, the server efficiently serves over one million rows,
+with full support for grouping, aggregation, and filtering.
+
+SQLite is used for simplicity, allowing the database to live alongside the server code.
+In production, you might use a more powerful database like ClickHouse, which offers extensive aggregation capabilities.
+
+For more guidance on server data loading, see the
+[LyteNyte Grid server loading documentation](https://www.1771technologies.com/docs/server-data-loading-overview).
