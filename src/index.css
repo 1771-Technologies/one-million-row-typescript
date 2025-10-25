@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import "@1771technologies/lytenyte-pro/grid.css";
 
 @layer {
   * {
@@ -20,8 +20,6 @@
   --breakpoint-xl: 1080px;
   --breakpoint-2xl: 1360px;
   --breakpoint-3xl: 1520px;
-
-  --color-*: initial;
 
   --color-page: var(--page);
   --color-white: white;
@@ -306,4 +304,22 @@ body {
 .no-transitions * {
   transition-property: color, background-color, border-color, fill, stroke;
   transition-duration: 0s !important;
+}
+
+.lng-grid [data-ln-cell="true"] {
+  font-size: 13px;
+}
+
+.lng-grid *:focus-visible {
+  outline: 1px solid var(--lng1771-primary-50);
+  outline-offset: -1px;
+}
+.lng-grid [data-ln-header-cell="true"]:focus-visible {
+  outline-offset: -2px;
+}
+
+.lng-grid {
+  & [data-ln-header-cell="true"]::after {
+    background-color: var(--lng1771-gray-50);
+  }
 }

@@ -1,9 +1,11 @@
+import "./index.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "./index.css";
 import { ThemeProvider } from "next-themes";
 import { Header } from "./components/header.tsx";
-import { Grid } from "./grid.tsx";
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { GridLoader } from "./grid/grid-loader.tsx";
 
 const theme = localStorage.getItem("theme");
 
@@ -22,22 +24,26 @@ if (theme === "system") {
 if (finalTheme === "light") document.body.classList.add("light");
 else document.body.classList.add("lng1771-teal");
 
+const client = new QueryClient();
+
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
+  <QueryClientProvider client={client}>
     <ThemeProvider>
-      <div className="flex flex-col h-screen">
-        <div className="h-header w-full-client flex flex-col border-b border-gray-200 bg-gray-50 px-6">
-          <Header />
-        </div>
-        <h1 className="text-center text-3xl text-primary-900 py-2">
-          One Million Row Demo
-        </h1>
-        <div className="mx-auto container flex-1 p-4">
-          <div className="border border-gray-300 h-full w-full">
-            <Grid />
+      <StrictMode>
+        <div className="flex flex-col h-screen">
+          <div className="h-header w-full-client flex flex-col border-b border-gray-200 bg-gray-50 px-6">
+            <Header />
+          </div>
+          <h1 className="text-center text-3xl text-primary-900 py-2">
+            One Million Row Demo
+          </h1>
+          <div className="mx-auto container flex-1 p-4 lng-grid">
+            <div className="border border-gray-300 h-full w-full rounded-xl overflow-hidden">
+              <GridLoader />
+            </div>
           </div>
         </div>
-      </div>
+      </StrictMode>
     </ThemeProvider>
-  </StrictMode>
+  </QueryClientProvider>
 );
