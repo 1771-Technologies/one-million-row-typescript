@@ -1,4 +1,5 @@
 import { Grid, useServerDataSource } from "@1771technologies/lytenyte-pro";
+import { Mosaic } from "react-loading-indicators";
 import { columns } from "./columns";
 import { tw } from "../lib/tw";
 import type { Movie } from "./types";
@@ -48,11 +49,19 @@ export function MillionRowGrid() {
 
   const { header, rows } = grid.view.useValue();
 
+  const isLoading = ds.isLoading.useValue();
+
   return (
     <div className="w-full h-full flex flex-col">
       <GroupPills grid={grid} />
 
-      <div className="flex-1">
+      <div className="flex-1 relative">
+        {isLoading && (
+          <div className="w-full h-full absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center flex-col">
+            <Mosaic color="#32cd32" size="medium" text="" textColor="" />
+            Loading...
+          </div>
+        )}
         <Grid.Root grid={grid}>
           <Grid.Viewport
             id="grid"
