@@ -8,8 +8,9 @@ import { HeaderRenderer } from "./renderers/header-renderer";
 import { GroupPills } from "./group-pill-manager";
 import { BaseRenderer } from "./renderers/base-renderer";
 import { GroupCellRenderer } from "./renderers/group-cell";
+import { GridFrame } from "./grid-frame";
 
-export function MillionRowGrid() {
+export function MillionRowGrid({ onReset }: { onReset: () => void }) {
   const ds = useServerDataSource<Movie>({
     dataFetcher: async (req) => {
       const res = await fetchSlice({ model: req.model, reqs: req.requests });
@@ -34,7 +35,11 @@ export function MillionRowGrid() {
     },
 
     rowGroupColumn: {
+      pin: "start",
       cellRenderer: GroupCellRenderer,
+      uiHints: {
+        resizable: true,
+      },
     },
 
     columnBase: {
@@ -53,9 +58,11 @@ export function MillionRowGrid() {
 
   return (
     <div className="w-full h-full flex flex-col">
-      <GroupPills grid={grid} />
-
-      <div className="flex-1 relative">
+      <GridFrame
+        onReset={onReset}
+        title="One Million Rows"
+        headerChildren={<GroupPills grid={grid} />}
+      >
         {isLoading && (
           <div className="w-full h-full absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center flex-col">
             <Mosaic color="#32cd32" size="medium" text="" textColor="" />
@@ -108,7 +115,7 @@ export function MillionRowGrid() {
             </Grid.RowsContainer>
           </Grid.Viewport>
         </Grid.Root>
-      </div>
+      </GridFrame>
     </div>
   );
 }

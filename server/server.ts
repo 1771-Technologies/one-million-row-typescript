@@ -122,7 +122,12 @@ app.post("/view-slice", async (c) => {
             childCount: (data as { child_count: number }).child_count,
             data,
             key: (data as { key: string }).key,
-            id: `__ROOT__${i + x.start}` + " / " + x.path.join(" / "),
+            id:
+              `__ROOT__` +
+              " / " +
+              x.path.join(" / ") +
+              "/" +
+              (data as { key: string }).key,
           };
         }
       ),

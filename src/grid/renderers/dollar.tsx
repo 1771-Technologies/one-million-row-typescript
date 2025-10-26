@@ -8,5 +8,10 @@ const formatter = new Intl.NumberFormat("en-Us", {
 export function Dollar({ grid, row, column }: CellRendererParams<Movie>) {
   const field = grid.api.columnField(column, row) as number;
 
-  return typeof field === "number" ? "$" + formatter.format(field) : "-";
+  const aggModel = grid.state.aggModel.get();
+  const showSign = aggModel[column.id]?.fn !== "count";
+
+  const sign = showSign ? "$" : "";
+
+  return typeof field === "number" ? sign + formatter.format(field) : "-";
 }

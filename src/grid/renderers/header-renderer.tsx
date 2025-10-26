@@ -34,25 +34,6 @@ export function HeaderRenderer({
   const isDescending = sort?.isDescending ?? false;
 
   const filterModel = grid.state.filterModel.useValue();
-
-  const initialFilter = useMemo(() => {
-    const filter = filterModel[column.id];
-
-    if (!filter) return null;
-
-    if (filter.kind === "combination") return filter;
-
-    return {
-      kind: "combination",
-      filters: [filter],
-      operator: "AND",
-    };
-  }, [filterModel, column]);
-
-  const [tempFilter, setTempFilter] = useTwoFlowState<Partial<
-    Partial<FilterModelItem<Movie>>
-  > | null>((initialFilter as FilterModelItem<Movie>) ?? null);
-
   const hasFilter = filterModel[column.id];
 
   const aggModel = grid.state.aggModel.useValue();
@@ -111,93 +92,7 @@ export function HeaderRenderer({
             )}
           </PopoverTrigger>
           <PopoverContent onClick={(e) => e.stopPropagation()}>
-            <div className="flex flex-col gap-2">
-              <SimpleFilterStringOrCombo
-                column={column}
-                filter={tempFilter}
-                setFilter={setTempFilter}
-              />
-              <div className="flex justify-end gap-2 py-2">
-                <PopoverClose
-                  onClick={() => {
-                    grid.state.filterInModel.set((prev) => {
-                      const next = { ...prev };
-                      delete next[column.id];
-
-                      return next;
-                    });
-
-                    grid.state.filterModel.set((prev) => {
-                      const next = { ...prev };
-                      delete next[column.id];
-
-                      return next;
-                    });
-                  }}
-                  className={tw(
-                    "text-sm border border-(--lng1771-gray-30) px-3 rounded py-0.5 hover:bg-(--lng1771-gray-10) bg-(--lng1771-gray-00) text-(--lng1771-gray-70) cursor-pointer transition-colors"
-                  )}
-                >
-                  Clear
-                </PopoverClose>
-                <PopoverClose
-                  onClick={() => {
-                    if (tempFilter) {
-                      let validFilter;
-                      if (
-                        tempFilter.kind === "number" ||
-                        tempFilter.kind === "date" ||
-                        tempFilter.kind === "string"
-                      ) {
-                        if (tempFilter.operator && tempFilter.value != null)
-                          validFilter = tempFilter;
-                      } else if (tempFilter.kind === "combination") {
-                        const first = tempFilter.filters?.[0];
-                        const second = tempFilter.filters?.[1];
-                        const filters = [];
-                        if (
-                          (first?.kind === "string" ||
-                            first?.kind === "date" ||
-                            first?.kind === "number") &&
-                          first.operator &&
-                          first.value != null
-                        )
-                          filters.push(first);
-                        if (
-                          (second?.kind === "string" ||
-                            second?.kind === "date" ||
-                            second?.kind === "number") &&
-                          second.operator &&
-                          second.value != null
-                        )
-                          filters.push(second);
-
-                        if (filters.length === 1) {
-                          validFilter = filters[0];
-                        } else if (filters.length === 2) {
-                          validFilter = { ...tempFilter, filters };
-                        }
-                      }
-
-                      if (validFilter) {
-                        grid.state.filterModel.set((prev) => {
-                          return {
-                            ...prev,
-                            [column.id]: validFilter,
-                          };
-                        });
-                      }
-                    }
-                  }}
-                  style={{ transform: "scale(0.92)" }}
-                  className={tw(
-                    "text-sm  border border-(--lng1771-primary-30) px-3 rounded py-0.5 hover:bg-(--lng1771-primary-70) bg-(--lng1771-primary-50) text-(--lng1771-gray-02) font-semibold cursor-pointer transition-colors"
-                  )}
-                >
-                  Apply
-                </PopoverClose>
-              </div>
-            </div>
+            <PopoverFilterContent grid={grid} column={column} />
           </PopoverContent>
         </Popover>
 
@@ -232,7 +127,7 @@ function AggMenu({
   return (
     <D.Root>
       <D.Trigger className={tw(className)} asChild>
-        <button className="focus-visible:ring-ln-primary-50 rounded px-1 py-1 text-xs text-[var(--lng1771-primary-50)] hover:bg-[var(--lng1771-primary-30)] focus:outline-none focus-visible:ring-1">
+        <button className="focus-visible:ring-(--lng1771-primary-50) rounded px-1 py-1 text-xs text-[var(--lng1771-primary-50)] hover:bg-[var(--lng1771-primary-30)] focus:outline-none focus-visible:ring-1">
           ({aggName as string})
         </button>
       </D.Trigger>
@@ -260,7 +155,7 @@ function GridDropMenuContent(props: PropsWithChildren) {
   return (
     <D.Content
       className={tw(
-        "bg-ln-gray-05 border-ln-gray-30 z-50 rounded-lg border p-1"
+        "bg-(--lng1771-gray-05) border-(--lng1771-gray-30) z-50 rounded-lg border p-1"
       )}
     >
       {props.children}
@@ -268,7 +163,7 @@ function GridDropMenuContent(props: PropsWithChildren) {
   );
 }
 const itemCls =
-  "flex items-center text-sm text-ln-gray-80 cursor-pointer rounded-lg  data-[highlighted]:bg-ln-gray-30 py-1 pr-2 px-0.5";
+  "flex items-center text-sm text-(--lng1771-gray-80) cursor-pointer rounded-lg  data-[highlighted]:bg-(--lng1771-gray-30) py-1 pr-2 px-0.5";
 
 const RadioItem = ({
   icon,
@@ -280,18 +175,21 @@ const RadioItem = ({
   return (
     <D.DropdownMenuRadioItem
       {...props}
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
       className={tw(
         props.className,
         itemCls,
         "group",
-        "data-[disabled]:text-ln-gray-30"
+        "data-[disabled]:text-(--lng1771-gray-30)"
       )}
     >
       {icon && <MenuIcon>{icon}</MenuIcon>}
       {props.label}
       <MenuIcon>
         <TickmarkIcon
-          className="stroke-ln-primary-50 relative hidden group-data-[state='checked']:block"
+          className="stroke-(--lng1771-primary-50) relative hidden group-data-[state='checked']:block"
           style={{ right: -16 }}
         />
       </MenuIcon>
@@ -300,8 +198,123 @@ const RadioItem = ({
 };
 const MenuIcon = (props: PropsWithChildren) => {
   return (
-    <span className="text-ln-gray-70 mr-2 flex h-[24px] w-[20px] items-center justify-center">
+    <span className="text-(--lng1771-gray-70) mr-2 flex h-[24px] w-[20px] items-center justify-center">
       {props.children}
     </span>
   );
 };
+
+function PopoverFilterContent({
+  grid,
+  column,
+}: HeaderCellRendererParams<Movie>) {
+  const filterModel = grid.state.filterModel.useValue();
+
+  const initialFilter = useMemo(() => {
+    const filter = filterModel[column.id];
+
+    if (!filter) return null;
+
+    if (filter.kind === "combination") return filter;
+
+    return {
+      kind: "combination",
+      filters: [filter],
+      operator: "AND",
+    };
+  }, [filterModel, column]);
+
+  const [tempFilter, setTempFilter] = useTwoFlowState<Partial<
+    Partial<FilterModelItem<Movie>>
+  > | null>((initialFilter as FilterModelItem<Movie>) ?? null);
+
+  return (
+    <div className="flex flex-col gap-2">
+      <SimpleFilterStringOrCombo
+        column={column}
+        filter={tempFilter}
+        setFilter={setTempFilter}
+      />
+      <div className="flex justify-end gap-2 py-2">
+        <PopoverClose
+          onClick={() => {
+            grid.state.filterInModel.set((prev) => {
+              const next = { ...prev };
+              delete next[column.id];
+
+              return next;
+            });
+
+            grid.state.filterModel.set((prev) => {
+              const next = { ...prev };
+              delete next[column.id];
+
+              return next;
+            });
+          }}
+          className={tw(
+            "text-sm border border-(--lng1771-gray-30) px-3 rounded py-0.5 hover:bg-(--lng1771-gray-10) bg-(--lng1771-gray-00) text-(--lng1771-gray-70) cursor-pointer transition-colors"
+          )}
+        >
+          Clear
+        </PopoverClose>
+        <PopoverClose
+          onClick={() => {
+            if (tempFilter) {
+              let validFilter;
+              if (
+                tempFilter.kind === "number" ||
+                tempFilter.kind === "date" ||
+                tempFilter.kind === "string"
+              ) {
+                if (tempFilter.operator && tempFilter.value != null)
+                  validFilter = tempFilter;
+              } else if (tempFilter.kind === "combination") {
+                const first = tempFilter.filters?.[0];
+                const second = tempFilter.filters?.[1];
+                const filters = [];
+                if (
+                  (first?.kind === "string" ||
+                    first?.kind === "date" ||
+                    first?.kind === "number") &&
+                  first.operator &&
+                  first.value != null
+                )
+                  filters.push(first);
+                if (
+                  (second?.kind === "string" ||
+                    second?.kind === "date" ||
+                    second?.kind === "number") &&
+                  second.operator &&
+                  second.value != null
+                )
+                  filters.push(second);
+
+                if (filters.length === 1) {
+                  validFilter = filters[0];
+                } else if (filters.length === 2) {
+                  validFilter = { ...tempFilter, filters };
+                }
+              }
+
+              if (validFilter) {
+                grid.state.filterModel.set((prev) => {
+                  return {
+                    ...prev,
+                    [column.id]: validFilter,
+                  };
+                });
+              }
+            }
+          }}
+          style={{ transform: "scale(0.92)" }}
+          className={tw(
+            "text-sm  border border-(--lng1771-primary-30) px-3 rounded py-0.5 hover:bg-(--lng1771-primary-70) bg-(--lng1771-primary-50) text-(--lng1771-gray-02) font-semibold cursor-pointer transition-colors"
+          )}
+        >
+          Apply
+        </PopoverClose>
+      </div>
+    </div>
+  );
+}

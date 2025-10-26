@@ -5,21 +5,11 @@ import { VoteAverage } from "./renderers/vote-average";
 import { ReleaseDate } from "./renderers/release-date";
 import { Dollar } from "./renderers/dollar";
 import { Runtime } from "./renderers/runtime";
-import { BackdropPath } from "./renderers/backdrop-path";
 import { OriginalLanguage } from "./renderers/flags";
 import { Overview } from "./renderers/overview";
 import { Popularity } from "./renderers/popularity";
 
 export const columns: Column<Movie>[] = [
-  {
-    id: "backdrop_path",
-    name: "",
-    width: 40,
-    widthMin: 40,
-    widthMax: 40,
-    cellRenderer: BackdropPath,
-    pin: "start",
-  },
   { id: "title", name: "Title", width: 400 },
   {
     id: "vote_average",
@@ -103,7 +93,7 @@ export const columns: Column<Movie>[] = [
       resizable: true,
     },
   },
-  { id: "overview", name: "Overview", cellRenderer: Overview },
+  { id: "overview", name: "Synopsis", cellRenderer: Overview },
   {
     id: "popularity",
     name: "Popularity",
@@ -134,7 +124,7 @@ export const columns: Column<Movie>[] = [
   },
   {
     id: "production_country",
-    name: "Production Country",
+    name: "Country",
     uiHints: { rowGroupable: true, resizable: true, movable: true },
   },
 ];
