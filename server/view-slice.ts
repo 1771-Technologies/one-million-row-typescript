@@ -107,10 +107,14 @@ export function getViewSlice(view: ViewSlice) {
     ${where}
 `;
 
-  const rows = db.prepare(query).all();
-  const count = (db.prepare(queryCount).get() as { cnt: number }).cnt;
+  const promise = new Promise<{ rows: unknown[]; count: number }>((res) => {
+    const rows = db.prepare(query).all();
+    const count = (db.prepare(queryCount).get() as { cnt: number }).cnt;
 
-  return { rows, count };
+    res({ rows, count });
+  });
+
+  return promise;
 }
 
 function getOrderBy(sorts: ViewSlice["sort"], groups: string[]) {

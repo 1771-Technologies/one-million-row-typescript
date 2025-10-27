@@ -16,8 +16,8 @@ export const columns: Column<Movie>[] = [
     name: "Vote Average",
     type: "number",
     cellRenderer: VoteAverage,
-    width: 160,
-    widthMin: 160,
+    width: 180,
+    widthMin: 180,
     uiHints: {
       resizable: true,
       movable: true,
@@ -73,8 +73,8 @@ export const columns: Column<Movie>[] = [
     name: "Budget",
     type: "number",
     cellRenderer: Dollar,
-    width: 130,
-    widthMin: 130,
+    width: 150,
+    widthMin: 150,
     uiHints: {
       resizable: true,
       movable: true,
@@ -83,10 +83,10 @@ export const columns: Column<Movie>[] = [
   },
   {
     id: "original_language",
-    name: "Lang",
+    name: "Language",
     cellRenderer: OriginalLanguage,
-    width: 80,
-    widthMin: 80,
+    width: 120,
+    widthMin: 120,
     uiHints: {
       rowGroupable: true,
       movable: true,
@@ -99,8 +99,8 @@ export const columns: Column<Movie>[] = [
     name: "Popularity",
     type: "number",
     cellRenderer: Popularity,
-    width: 140,
-    widthMin: 140,
+    width: 180,
+    widthMin: 180,
     uiHints: {
       resizable: true,
       movable: true,
@@ -120,6 +120,7 @@ export const columns: Column<Movie>[] = [
   {
     id: "production_company",
     name: "Production Company",
+    widthMin: 180,
     uiHints: { rowGroupable: true, resizable: true, movable: true },
   },
   {

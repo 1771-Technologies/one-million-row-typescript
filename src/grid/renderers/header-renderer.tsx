@@ -45,7 +45,7 @@ export function HeaderRenderer({
     <div className="h-full w-full px-1 py-1">
       <div
         className={tw(
-          "hover:bg-(--lng1771-gray-10) flex h-full w-full px-2 rounded-lg items-center text-xs transition-colors cursor-pointer gap-1",
+          "hover:bg-(--lng1771-gray-10) flex h-full w-full px-2 rounded-lg items-center text-xs transition-colors cursor-pointer gap-0.5 text-nowrap",
           (column.type === "number" || column.type === "date") &&
             "tabular-nums flex-row-reverse"
         )}
@@ -97,13 +97,13 @@ export function HeaderRenderer({
         </Popover>
 
         {sort && (
-          <>
+          <span>
             {!isDescending ? (
               <ArrowUpIcon className="size-4" />
             ) : (
               <ArrowDownIcon className="size-4" />
             )}
-          </>
+          </span>
         )}
       </div>
     </div>

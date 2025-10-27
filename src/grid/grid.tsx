@@ -1,4 +1,8 @@
-import { Grid, useServerDataSource } from "@1771technologies/lytenyte-pro";
+import {
+  Grid,
+  measureText,
+  useServerDataSource,
+} from "@1771technologies/lytenyte-pro";
 import { Mosaic } from "react-loading-indicators";
 import { columns } from "./columns";
 import { tw } from "../lib/tw";
@@ -9,6 +13,8 @@ import { GroupPills } from "./group-pill-manager";
 import { BaseRenderer } from "./renderers/base-renderer";
 import { GroupCellRenderer } from "./renderers/group-cell";
 import { GridFrame } from "./grid-frame";
+import { MarketRenderer } from "./renderers/marker";
+import { useEffect } from "react";
 
 export function MillionRowGrid({ onReset }: { onReset: () => void }) {
   const ds = useServerDataSource<Movie>({
@@ -34,6 +40,10 @@ export function MillionRowGrid({ onReset }: { onReset: () => void }) {
       vote_average: { fn: "avg" },
     },
 
+    columnMarker: {
+      cellRenderer: MarketRenderer,
+    },
+    columnMarkerEnabled: true,
     rowGroupColumn: {
       pin: "start",
       cellRenderer: GroupCellRenderer,
@@ -45,6 +55,7 @@ export function MillionRowGrid({ onReset }: { onReset: () => void }) {
     columnBase: {
       headerRenderer: HeaderRenderer,
       cellRenderer: BaseRenderer,
+      widthMin: 150,
       uiHints: {
         movable: true,
         resizable: true,
@@ -55,6 +66,27 @@ export function MillionRowGrid({ onReset }: { onReset: () => void }) {
   const { header, rows } = grid.view.useValue();
 
   const isLoading = ds.isLoading.useValue();
+
+  useEffect(() => {
+    return grid.state.viewBounds.watch(() => {
+      const b = grid.state.viewBounds.get();
+      const max = "9".repeat(`${b.rowCenterEnd}`.length);
+
+      const width = Math.max(
+        measureText(`${max}`, grid.state.viewport.get()!).width + 16,
+        40
+      );
+      const currentWidth = grid.state.columnMarker.get().width! ?? 40;
+      if (Math.abs(currentWidth - width) > 5) {
+        grid.state.columnMarker.set((prev) => ({
+          ...prev,
+          minWidth: width,
+          maxWidth: width,
+          width,
+        }));
+      }
+    });
+  }, []);
 
   return (
     <div className="w-full h-full flex flex-col">
@@ -81,7 +113,16 @@ export function MillionRowGrid({ onReset }: { onReset: () => void }) {
                     {headerRow.map((cell) => {
                       if (cell.kind === "group") return null;
 
-                      return <Grid.HeaderCell key={cell.id} cell={cell} />;
+                      return (
+                        <Grid.HeaderCell
+                          key={cell.id}
+                          cell={cell}
+                          className={tw(
+                            cell.column.id === "lytenyte-marker-column" &&
+                              "bg-(--lng1771-gray-10)!"
+                          )}
+                        />
+                      );
                     })}
                   </Grid.HeaderRow>
                 );
@@ -103,7 +144,9 @@ export function MillionRowGrid({ onReset }: { onReset: () => void }) {
                               "flex items-center px-2",
                               (cell.column.type === "number" ||
                                 cell.column.type === "date") &&
-                                "justify-end tabular-nums"
+                                "justify-end tabular-nums",
+                              cell.column.id === "lytenyte-marker-column" &&
+                                "px-0 font-mono"
                             )}
                           />
                         );

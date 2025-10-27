@@ -75,7 +75,7 @@ app.post("/view-slice", async (c) => {
     })
     .filter((x) => x != null);
 
-  const responses = body.reqs.map((x) => {
+  const responses = body.reqs.map(async (x) => {
     const view: ViewSlice = {
       start: x.start,
       end: x.end,
@@ -100,7 +100,7 @@ app.post("/view-slice", async (c) => {
       }),
     };
 
-    const rows = getViewSlice(view);
+    const rows = await getViewSlice(view);
 
     const isLeaf = x.path.length === model.groups.length;
 
@@ -138,7 +138,7 @@ app.post("/view-slice", async (c) => {
     } satisfies DataResponse;
   });
 
-  return c.json(responses);
+  return c.json(await Promise.all(responses));
 });
 
 serve({
