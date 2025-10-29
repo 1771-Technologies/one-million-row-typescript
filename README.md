@@ -1,18 +1,35 @@
 ![demo](./demo.png)
 
-# One Million Row Demo
+# One Million Row Demo (TypeScript)
 
-A high-performance demo showcasing how to load and interact with over one million
-rows of data from an external source using LyteNyte Grid. This example demonstrates
-server-side data loading with LyteNyte Grid.
+A high-performance demo illustrating how to load and interact with over one million
+rows of data from an external source using LyteNyte Grid. This example showcases a
+TypeScript reference implementation that uses server data loading.
 
 In addition to [LyteNyte Grid](https://www.1771technologies.com/demo), this demo uses:
 
-- **SQLite** – Lightweight, embedded database.
-- **[Vite](https://vitejs.dev/)** – Next-generation frontend tooling.
-- **[Hono](https://hono.dev/)** – Ultra-lightweight, fast backend framework.
+- [SQLite](https://sqlite.org/)
+- [Vite](https://vitejs.dev/)
+- [Hono](https://hono.dev/)
 
----
+## Overview
+
+This guide explains the server data loading TypeScript reference implementation.
+The reference implementation is self-contained, allowing you to get started quickly.
+
+It uses SQLite as the backing database. While SQLite is suitable for examples and
+embedded applications, we recommend an industrial-grade database such as 
+[ClickHouse](https://clickhouse.com/).
+
+Use this implementation to understand the form of SQL queries your
+backend should run to support LyteNyte Grid features. This simple example serves
+as a starting point and demonstrates only a limited set of features,
+including filtering, sorting, grouping, and aggregations.
+
+> [!Note]
+> This TypeScript reference implementation is for demonstration purposes only. The reference
+> implementation is single threaded for simplicity, hence requests to the server are queued
+> and resolved sequentially.
 
 ## 🚀 Getting Started
 
@@ -32,10 +49,35 @@ This launches:
 - A Vite frontend for the UI
 - A Hono backend that serves data from `movies.db` to the frontend
 
-### 📊 LyteNyte Grid
+## About The Data
 
-This project demonstrates the power of [LyteNyte Grid](https://www.1771technologies.com/demo), a lightweight,
-high-performance data grid built to handle massive datasets with ease.
+The reference implementation uses a movie dataset with ~1.3 million rows. The dataset is available
+on [Kaggle](https://www.kaggle.com/datasets/shubhamchandra235/imdb-and-tmdb-movie-metadata-big-dataset-1m) 
+for testing. It includes columns such as title, release year, genre, and ratings.
+
+The implementation does not utilize every column, and some values have been
+adjusted to illustrate the example better. See `create-db.ts` for the code
+used to generate `movies.db`.
+
+> [!Note]
+> The Million Row Demo uses [Git LFS](https://git-lfs.com/) to store the database
+> file in the repository due to its large size. Install `git lfs`
+> if you don’t already have it on your system.
+>
+> If that isn't an option, download the database from Kaggle and run `create-db.ts` to recreate it locally.
+
+## TypeScript Implementation File
+
+The key file, other than the UI, is `view-slice.ts`. This file builds and
+executes the SQL query for each view. If you're not familiar with SQL,
+`use view-slice.ts` as a reference when implementing your own server-side data source.
+
+For detailed examples and logic, review the [file here](https://github.com/1771-Technologies/one-million-row-typescript/blob/main/server/view-slice.ts).
+
+## Showcase Highlights
+
+This demo showcases how [LyteNyte Grid](https://www.1771technologies.com/demo) blends high performance with seamless integration,
+empowering developers to build data tables that effortlessly handle massive datasets.
 
 Key features include:
 
@@ -43,20 +85,3 @@ Key features include:
 - Fast filtering, sorting, and pagination
 - Minimal setup with flexible configuration
 - Designed for modern UI frameworks like React and Vite
-
-Explore the live demo [here](https://www.1771technologies.com/demo).
-
-### About the Implementation
-
-LyteNyte Grid handles the client-side half of the server-loading process.
-The server is responsible for handling data requests and implementing any required functionality.
-In this demo, the backend logic lives in the \`server\` folder.
-
-In fewer than 300 lines of code, the server efficiently serves over one million rows,
-with full support for grouping, aggregation, and filtering.
-
-SQLite is used for simplicity, allowing the database to live alongside the server code.
-In production, you might use a more powerful database like ClickHouse, which offers extensive aggregation capabilities.
-
-For more guidance on server data loading, see the
-[LyteNyte Grid server loading documentation](https://www.1771technologies.com/docs/server-data-loading-overview).
